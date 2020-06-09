@@ -12,7 +12,7 @@ import requests
 from geopy.geocoders import Nominatim
 
 # Utilizing an empty geoJSON template here
-geojson = \
+geojson_template = \
     {
         "type": "FeatureCollection",
         "features": []
@@ -60,9 +60,9 @@ def scrape_geojson_data(address_list):
         temp["properties"]["name"] = name
         temp["geometry"] = poly
 
-        geojson["features"].append(temp)
+        geojson_template["features"].append(temp)
 
-    return geojson
+    return geojson_template
 
 
 def get_gcoor(name):
@@ -82,16 +82,17 @@ def get_gcoor(name):
     return latitude, longitude
 
 
-def create_geojson_file(name_list):
+def create_geojson_file(name_list, out_file):
     '''
     This function creates and writes a json file from scraped geoJSON data.
     Use this if you want to create a different geoJSON file than in this example.
 
     :param name_list: the addresses to get geoJSON data for
+    :param out_file: the output name for geoJSON file
     '''
 
     geo_data = scrape_geojson_data(name_list)
-    with open('geodata.json', 'w') as outfile:
+    with open(out_file, 'w') as outfile:
         json.dump(geo_data, outfile)
 
 
@@ -139,6 +140,7 @@ def main():
 
     create_folium_map(geodata, 'Population by county', county_data,
                       ['County', 'Population'], 'Population')
+
 
 if __name__ == "__main__":
     main()
